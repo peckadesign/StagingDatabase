@@ -40,6 +40,7 @@ $DUMP_COMMAND > ${OUTPUT}/${DATABASE}_data.sql
 
 echo $(date +%T) "Připravuji schéma pro obnovení"
 sed -i 's/DEFINER=[^*]*\*/\*/g' ${OUTPUT}/${DATABASE}_structure.sql 
+sed -i '/ALTER DATABASE/d' ${OUTPUT}/${DATABASE}_structure.sql 
 
 echo $(date +%T) "Mažu obsah databáze"
 mysql --defaults-extra-file=${IDENTITY_FILE} --skip-column-names -e "SELECT concat(IF(STRCMP(table_type, 'view'), 'DROP TABLE ', 'DROP VIEW '), table_name, ';') FROM information_schema.tables WHERE table_schema = '${DATABASE}_bac';" ${DATABASE}_bac | mysql --defaults-extra-file=${IDENTITY_FILE} --init-command="SET FOREIGN_KEY_CHECKS = 0;" ${DATABASE}_bac 
