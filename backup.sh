@@ -52,7 +52,7 @@ echo $(date +%T) "Stáhnu anonymizovaná data"
 scp -C ${SSH_NAME}:${OUTPUT}/${DATABASE}_anonymize.sql /var/databases/${DATABASE}_data.sql
 
 echo $(date +%T) "Mažu obsah databáze"
-mysql --defaults-extra-file=${LOCAL_IDENTITY_FILE} --skip-column-names -e "SELECT concat(IF(STRCMP(table_type, 'view'), 'DROP TABLE ', 'DROP VIEW '), table_name, ';') FROM information_schema.tables WHERE table_schema = '${LOCAL_DATABASE}';" ${LOCAL_DATABASE} | mysql --defaults-extra-file=${LOCAL_IDENTITY_FILE} --init-command="SET FOREIGN_KEY_CHECKS = 0;" ${LOCAL_DATABASE}
+mysql --defaults-extra-file=${LOCAL_IDENTITY_FILE} --skip-column-names -e "SELECT concat(IF(STRCMP(table_type, 'view'), 'DROP TABLE ', 'DROP VIEW '), '\`', table_name, '\`;') FROM information_schema.tables WHERE table_schema = '${LOCAL_DATABASE}';" ${LOCAL_DATABASE} | mysql --defaults-extra-file=${LOCAL_IDENTITY_FILE} --init-command="SET FOREIGN_KEY_CHECKS = 0;" ${LOCAL_DATABASE}
 
 echo $(date +%T) "Obnovím strukturu databáze"
 cat /var/databases/${DATABASE}_structure.sql | mysql --defaults-extra-file=${LOCAL_IDENTITY_FILE} ${LOCAL_DATABASE}
