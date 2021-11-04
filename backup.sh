@@ -1,8 +1,9 @@
 #!/bin/bash
 
 IGNORED="" # g
+UPLOAD_SKIP=false
 
-while getopts "i:p:o:s:l:d:a:g::" o; do
+while getopts "i:p:o:s:l:d:a:g::u" o; do
         case "${o}" in
         i)
                 IDENTITY_FILE=${OPTARG}
@@ -28,6 +29,9 @@ while getopts "i:p:o:s:l:d:a:g::" o; do
 	a)
 		ANONYMIZE=${OPTARG}
 		;;
+	u)
+		UPLOAD_SKIP=true
+		;;
 	*)
                 echo "Použití: $0 -i <cesta k souboru s identitou> -p <název produkční databáze> -o <adresář pro uložení dumpů> -g <mezerou oddělené názvy ignorovaných tabulek> -s <název SSH konfigurace> -l <cesta k souboru s identiou k lokální databázi> -d <název lokální databáze> -a <mezerou oddělené cesty k SQL kriptům, které budou upravovat data před dumpem>" 1>&2; exit 1;
                 ;;
@@ -39,8 +43,10 @@ if [ -z "${IDENTITY_FILE}" ] || [ -z "${DATABASE}" ] || [ -z "${OUTPUT}" ] || [ 
 	exit 1
 fi	
 
-echo $(date +%T) "Nahraji zálohovací skript na ostrý server"
-scp /root/StagingDatabase/backup_production.sh ${SSH_NAME}:${OUTPUT}
+if  ! $UPLOAD_SKIP ; then
+	echo $(date +%T) "Nahraji zálohovací skript na ostrý server"
+	scp /root/StagingDatabase/backup_production.sh ${SSH_NAME}:${OUTPUT}
+fi
 
 echo $(date +%T) "Spustím zálohu na ostrém serveru"
 ssh ${SSH_NAME} bash ${OUTPUT}/backup_production.sh -i ${IDENTITY_FILE} -p ${DATABASE} -o ${OUTPUT} -a \"${ANONYMIZE}\" -g \"${IGNORED}\"
