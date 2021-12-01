@@ -66,4 +66,7 @@ cat /var/databases/${DATABASE}_structure.sql | mysql --defaults-extra-file=${LOC
 echo $(date +%T) "Obnovím data"
 cat /var/databases/${DATABASE}_data.sql | mysql --defaults-extra-file=${LOCAL_IDENTITY_FILE} ${LOCAL_DATABASE}
 
+echo $(date +%T) "Optimalizuji databázi"
+mysqloptimize --defaults-extra-file=${LOCAL_IDENTITY_FILE} ${LOCAL_DATABASE}
+
 echo $(date +%T) "Obnova dokončena"
