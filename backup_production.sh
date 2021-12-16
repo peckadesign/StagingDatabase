@@ -33,7 +33,7 @@ for IGNORED_TABLE in ${IGNORED}; do
 done
 
 echo $(date +%T) "Dumpuji produkční schéma"
-mysqldump --defaults-extra-file=$IDENTITY_FILE $DATABASE --no-data --single-transaction > ${OUTPUT}/${DATABASE}_structure.sql
+mysqldump --defaults-extra-file=$IDENTITY_FILE $DATABASE --no-data --routines --events > ${OUTPUT}/${DATABASE}_structure.sql
 
 echo $(date +%T) "Dumpuji produkční data"
 $DUMP_COMMAND > ${OUTPUT}/${DATABASE}_data.sql
@@ -59,4 +59,3 @@ done
 
 echo $(date +%T) "Dumpuji anonymizovaná data"
 mysqldump --defaults-extra-file=$IDENTITY_FILE ${DATABASE}_bac --no-create-info --single-transaction --skip-triggers > ${OUTPUT}/${DATABASE}_anonymize.sql
-
