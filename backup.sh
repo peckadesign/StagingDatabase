@@ -52,7 +52,7 @@ echo $(date +%T) "Spustím zálohu na ostrém serveru"
 ssh ${SSH_NAME} bash ${OUTPUT}/backup_production.sh -i ${IDENTITY_FILE} -p ${DATABASE} -o ${OUTPUT} -a \"${ANONYMIZE}\" -g \"${IGNORED}\"
 
 echo $(date +%T) "Stáhnu strukturu databáze"
-scp -C ${SSH_NAME}:${OUTPUT}/${DATABASE}_structure.sql /var/databases/${DATABASE}_structure.sql
+scp -C ${SSH_NAME}:${OUTPUT}/${DATABASE}_structure_anonymize.sql /var/databases/${DATABASE}_structure.sql
 
 echo $(date +%T) "Stáhnu anonymizovaná data"
 scp -C ${SSH_NAME}:${OUTPUT}/${DATABASE}_anonymize.sql /var/databases/${DATABASE}_data.sql
