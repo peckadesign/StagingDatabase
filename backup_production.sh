@@ -57,5 +57,12 @@ for ANONYMIZE_SCRIPT in ${ANONYMIZE}; do
 	cat ${ANONYMIZE_SCRIPT} | mysql --defaults-extra-file=${IDENTITY_FILE} ${DATABASE}_bac
 done
 
+echo $(date +%T) "Dumpuji anonymizované schéma"
+mysqldump --defaults-extra-file=$IDENTITY_FILE ${DATABASE}_bac --no-data --single-transaction --routines --events > ${OUTPUT}/${DATABASE}_structure_anonymize.sql
+
+echo $(date +%T) "Připravuji anonymizované schéma pro obnovení"
+sed -i 's/DEFINER=[^*]*\*/\*/g' ${OUTPUT}/${DATABASE}_structure_anonymize.sql
+sed -i '/ALTER DATABASE/d' ${OUTPUT}/${DATABASE}_structure_anonymize.sql
+
 echo $(date +%T) "Dumpuji anonymizovaná data"
 mysqldump --defaults-extra-file=$IDENTITY_FILE ${DATABASE}_bac --no-create-info --single-transaction --skip-triggers > ${OUTPUT}/${DATABASE}_anonymize.sql
